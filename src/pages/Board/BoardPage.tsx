@@ -1,0 +1,1 @@
+// GET /api/board – board tham gia
