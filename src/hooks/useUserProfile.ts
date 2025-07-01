@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getUser, updateUser } from "../service/UserServices/userService";
 import type { UserProfileData } from "../service/UserServices/UserTypes";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 export const useUserProfile = () => {
     const [user, setUser] = useState<UserProfileData | null>(null);
@@ -33,7 +33,7 @@ export const useUserProfile = () => {
 
     useEffect(() => {
         loadUser();
-    }, [])
+    }, []);
 
     return {
         user,
