@@ -22,7 +22,7 @@ export const useUserProfile = () => {
         try {
             const updated = await updateUser({ firstName, lastName });
             setUser(prev => prev ? { ...prev, ...updated } : updated)
-            toast.success("Cập nhật thành công!");
+            toast.success("Cập nhật thành công!......");
             return true;
         } catch (err) {
             toast.error("Cập nhật thất bại");
