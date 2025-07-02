@@ -1,1 +1,0 @@
-// POST /api/board – form tạo mới

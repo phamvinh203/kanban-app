@@ -10,6 +10,7 @@ import { BsListTask } from "react-icons/bs";
 import { CiCreditCard1, CiSettings } from "react-icons/ci";
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { TokenManager } from "../../utils/tokenManager";
 
 
 const navItems = [
@@ -21,6 +22,11 @@ const navItems = [
     { label: 'Settings', icon: CiSettings, path: '/settings' },
     { label: 'Help & Support', icon: FiHelpCircle, path: '/help' },
 ];
+
+const handleLogout = () => {
+    TokenManager.clearTokens();
+    window.location.href = "/login";
+  };
 
 const Sidebar = () => {
     const [showPro, setShowPro] = useState(true);
@@ -130,7 +136,7 @@ const Sidebar = () => {
                     )}
                 </div>
                 {!isCollapsed && (
-                    <button>
+                    <button onClick={handleLogout}>
                         <FiLogOut className="text-slate-400 hover:text-white" />
                     </button>
                 )}
