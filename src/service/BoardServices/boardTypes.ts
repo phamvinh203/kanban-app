@@ -19,7 +19,7 @@ export interface Board {
   owner: BoardOwner;
 }
 
-export interface BoardPayload {
+export interface BoardFormInput {
   name: string;
   description?: string;
   isPinned?: boolean;

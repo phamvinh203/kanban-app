@@ -1,1 +1,0 @@
-// (tuỳ chọn) Avatar + Tên người tạo board

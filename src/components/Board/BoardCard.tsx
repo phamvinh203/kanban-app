@@ -1,1 +1,0 @@
-// Hiển thị 1 board (tên, mô tả, số member,...)

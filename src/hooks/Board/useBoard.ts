@@ -1,1 +1,0 @@
-// Lấy 1 board theo ID
