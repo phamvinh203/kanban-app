@@ -1,8 +1,18 @@
 import axios from "axios";
 import { TokenManager } from "../utils/tokenManager";
+import logout from "../utils/logout";
 
 const api = axios.create({
   baseURL: "http://192.168.29.173:3000/",
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
+
+// Tạo instance riêng cho refresh API (không có interceptor)
+const refreshApi = axios.create({
+  baseURL: "http://localhost:3000/",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -22,39 +32,39 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const { config: originalRequest, response } = error;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      const refreshToken = TokenManager.getRefreshToken();
-      if (refreshToken) {
-        try {
-          // Gọi API refresh token
-          const response = await api.post("/auth/refresh", {
-            refresh_token: refreshToken,
-          });
-
-          const { access_token, refresh_token: newRefreshToken } =
-            response.data;
-          TokenManager.setTokens(access_token, newRefreshToken);
-
-          // Retry request với token mới
-          originalRequest.headers.Authorization = `Bearer ${access_token}`;
-          return api(originalRequest);
-        } catch (refreshError) {
-          // Refresh token không hợp lệ, logout user
-          TokenManager.clearTokens();
-          window.location.href = "/login";
-        }
-      } else {
-        // Không có refresh token, logout user
-        TokenManager.clearTokens();
-        window.location.href = "/login";
-      }
+    // Chỉ xử lý lỗi 401 và chưa retry
+    if (response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
     }
 
-    return Promise.reject(error);
+    originalRequest._retry = true;
+    const refreshToken = TokenManager.getRefreshToken();
+
+    // Không có refresh token -> logout
+    if (!refreshToken) {
+      logout();
+      return Promise.reject(error);
+    }
+
+    try {
+      // Refresh token
+      const { data } = await refreshApi.post("/auth/refresh", {
+        refresh_token: refreshToken,
+      });
+
+      const { access_token, refresh_token: newRefreshToken } = data;
+      TokenManager.setTokens(access_token, newRefreshToken);
+
+      // Retry với token mới
+      originalRequest.headers.Authorization = `Bearer ${access_token}`;
+      return api(originalRequest);
+    } catch {
+      // Refresh thất bại -> logout
+      logout();
+      return Promise.reject(error);
+    }
   }
 );
 

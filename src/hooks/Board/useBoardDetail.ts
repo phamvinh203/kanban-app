@@ -27,7 +27,7 @@ export const useBoardDetail = (boardId: string): UseBoardDetailReturn => {
       const boardData = await getBoardById(boardId);
       setBoard(boardData);
     } catch (err: any) {
-      console.error("Error fetching board detail:", err);
+      // console.error("Error fetching board detail:", err);
       setError(err.response?.data?.message || "Không thể tải thông tin bảng");
       setBoard(null);
     } finally {

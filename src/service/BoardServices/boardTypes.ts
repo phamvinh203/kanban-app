@@ -27,3 +27,13 @@ export interface BoardFormInput {
   description?: string;
   isPinned?: boolean;
 }
+
+// Board invite
+export interface InvitationRequest {
+  boardId: number;
+  email: string;
+}
+
+export interface InvitationResponse {
+  token: string;
+}

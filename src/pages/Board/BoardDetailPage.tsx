@@ -98,16 +98,19 @@ const BoardDetailPage: React.FC = () => {
               {board.numberOfMembers}
             </p>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-gray-700 mb-2">👤 Chủ sở hữu</h3>
-            <p className="text-lg font-medium">
-              {board.owner.firstName} {board.owner.lastName}
-            </p>
-            <p className="text-sm text-gray-500">
-              Tạo ngày: {new Date(board.createdAt).toLocaleDateString("vi-VN")}
-            </p>
-          </div>
+          <button
+            className="bg-gray-50 p-4 rounded-lg"
+            onClick={() => setIsInviteModalOpen(true)}
+          >
+            <h3 className="font-semibold text-gray-700 mb-2">Share</h3>
+          </button>
         </div>
+
+        <BoardFormInvite
+          isOpen={isInviteModalOpen}
+          onClose={() => setIsInviteModalOpen(false)}
+          boardId={id || ""}
+        />
 
         {/* thêm các component  columns, cards, */}
         <div className="border-t pt-6">

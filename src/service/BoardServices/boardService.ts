@@ -1,5 +1,6 @@
+import { Await } from "react-router-dom";
 import api from "../../config/api";
-import type { Board, BoardFormInput } from "./boardTypes";
+import type { Board, BoardFormInput, InvitationRequest } from "./boardTypes";
 
 // POST /api/board – Tạo mới board
 export const createBoard = async (data: BoardFormInput): Promise<Board> => {
@@ -7,15 +8,15 @@ export const createBoard = async (data: BoardFormInput): Promise<Board> => {
   return res.data;
 };
 
-// GET /api/board – Lấy danh sách board
-export const getBoards = async (): Promise<Board[]> => {
-  const res = await api.get("/api/board");
+// GET /api/board/owned – Lấy danh sách board do user sở hữu
+export const getOwnedBoards = async (): Promise<Board[]> => {
+  const res = await api.get("/api/board/owned");
   return res.data;
 };
 
-// GET /api/board/owned – Lấy danh sách board do user sở hữu
-export const getOwenedBoards = async (): Promise<Board[]> => {
-  const res = await api.get("/api/board/owned");
+// GET /api/board – Lấy danh sách board
+export const getBoards = async (): Promise<Board[]> => {
+  const res = await api.get("/api/board");
   return res.data;
 };
 
@@ -44,3 +45,18 @@ export const initDeleteBoard = async (boardId: number): Promise<void> => {
   await api.post(`/api/board/delete/${boardId}/init`);
 };
 
+// Board invite
+
+// POST /api/board/invite/new – Mời người dùng vào board
+export const inviteUserToBoard = async (
+  data: InvitationRequest
+): Promise<{ token: string }> => {
+  const res = await api.post("/api/board/invite/new", data);
+  return res.data;
+};
+
+// PUT /api/board/invite/accept – Chấp nhận lời mời vào board
+export const acceptBoardInvitation = async (token: string): Promise<Board> => {
+  const res = await api.put(`/api/board/invite/accept?token=${token}`);
+  return res.data;
+};
