@@ -43,6 +43,8 @@ export const useBoardDetail = (boardId: string): UseBoardDetailReturn => {
     fetchBoard();
   }, [boardId]);
 
+  console.log('check board: ', board)
+
   return {
     board,
     loading,
