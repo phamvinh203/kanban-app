@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import myImage from '../../assets/user/userProfile.png';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import EditProfileModal from './EditProfileModal';
 
 const UserProfile = () => {
-    const { user, loading, editUser } = useUserProfile();
+    const { user, loading, editUser, updateUserProfilePicture } = useUserProfile();
     const [showModal, setShowModal] = useState(false);
+
+    const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            try {
+                await updateUserProfilePicture(file);
+            } catch (error) {
+                console.error("Lỗi khi tải ảnh:", error);
+            }
+        }
+    };
 
     if (loading) return <div className="p-8">Loading....</div>;
     if (!user) return <div className="p-8">Không tìm thấy người dùng</div>;
@@ -13,11 +24,20 @@ const UserProfile = () => {
         <div className="w-full bg-white rounded-lg shadow p-8 mt-6">
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center space-x-4">
-                    <img
-                        src={user.profilePicture || myImage}
-                        alt="Profile"
-                        className="w-20 h-20 rounded-full object-cover"
-                    />
+                    <div className='relative'>
+                        <img
+                            src={user.profilePicture || myImage}
+                            alt="Profile"
+                            className="w-20 h-20 rounded-full object-cover"
+                        />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            title="Tải lên ảnh đại diện"
+                        />
+                    </div>
                     <div>
                         <div className="flex items-center space-x-2">
                             <h2 className="text-xl font-semibold text-gray-800">
@@ -80,9 +100,14 @@ const UserProfile = () => {
                 <EditProfileModal
                     initialFirstName={user.firstName}
                     initialLastName={user.lastName}
+                    initialProfilePicture={user.profilePicture || undefined}
                     onClose={() => setShowModal(false)}
-                    onSave={async (first, last) => {
+                    onSave={async (first, last, profilePicture) => {
+                        console.log("onSave called with:", { first, last, profilePicture })
                         const success = await editUser(first, last);
+                        if (success && profilePicture) {
+                            await updateUserProfilePicture(profilePicture);
+                        }
                         if (success) setShowModal(false);
                     }}
                 />

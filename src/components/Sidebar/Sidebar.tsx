@@ -8,9 +8,12 @@ import {
 } from "react-icons/fi";
 import { BsListTask } from "react-icons/bs";
 import { CiCreditCard1, CiSettings } from "react-icons/ci";
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import logout from "../../utils/logout";
+import { TokenManager } from "../../utils/tokenManager";
+import { useUserProfile } from '../../hooks/useUserProfile';
+
 
 const navItems = [
   { label: "Home", icon: FiHome, path: "/" },
@@ -22,10 +25,12 @@ const navItems = [
   { label: "Help & Support", icon: FiHelpCircle, path: "/help" },
 ];
 
+
 const Sidebar = () => {
-  const [showPro, setShowPro] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const location = useLocation();
+    const [showPro, setShowPro] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const location = useLocation();
+    const { user, loading } = useUserProfile();
 
   return (
     <aside
@@ -129,29 +134,35 @@ const Sidebar = () => {
         )}
       </nav>
 
-      {/* Avatar */}
-      <div className="flex items-center border-t border-slate-800 px-4 py-4 justify-between">
-        <div className="flex items-center">
-          <img
-            src="https://avatars.githubusercontent.com/u/194400?&s=40"
-            alt="avatar"
-            className="h-8 w-8 rounded-full"
-          />
-          {!isCollapsed && (
-            <div className="ml-3 text-sm">
-              <div className="font-medium">Tom Cook</div>
-              <div className="text-xs text-slate-400">Basic Member</div>
+            {/* Avatar */}
+            <div className="flex items-center border-t border-slate-800 px-4 py-4 justify-between">
+                <div className="flex items-center">
+                    {loading ? (
+                        <div className="h-8 w-8 rounded-full bg-slate-700 animate-pulse" />
+                    ) : (
+                        <img
+                            src={user?.profilePicture || 'https://avatars.githubusercontent.com/u/194400?&s=40'}
+                            alt="avatar"
+                            className="h-8 w-8 rounded-full"
+                        />
+                    )}
+                    {!isCollapsed && !loading && user && (
+                        <div className="ml-3 text-sm">
+                            <div className="font-medium">{user.firstName} {user.lastName}</div>
+                            <div className="text-xs text-slate-400">
+                                {user.isAdmin ? 'Admin' : 'User'}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                {!isCollapsed && (
+                    <button onClick={logout}>
+                        <FiLogOut className="text-slate-400 hover:text-white" />
+                    </button>
+                )}
             </div>
-          )}
-        </div>
-        {!isCollapsed && (
-          <button onClick={logout}>
-            <FiLogOut className="text-slate-400 hover:text-white" />
-          </button>
-        )}
-      </div>
-    </aside>
-  );
+        </aside>
+    );
 };
 
 export default Sidebar;
