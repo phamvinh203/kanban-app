@@ -11,7 +11,7 @@ import { CiCreditCard1, CiSettings } from "react-icons/ci";
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { TokenManager } from "../../utils/tokenManager";
-
+import { useUserProfile } from '../../hooks/useUserProfile';
 
 const navItems = [
     { label: 'Home', icon: FiHome, path: '/' },
@@ -26,12 +26,13 @@ const navItems = [
 const handleLogout = () => {
     TokenManager.clearTokens();
     window.location.href = "/login";
-  };
+};
 
 const Sidebar = () => {
     const [showPro, setShowPro] = useState(true);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const location = useLocation();
+    const { user, loading } = useUserProfile();
 
     return (
         <aside
@@ -123,15 +124,21 @@ const Sidebar = () => {
             {/* Avatar */}
             <div className="flex items-center border-t border-slate-800 px-4 py-4 justify-between">
                 <div className="flex items-center">
-                    <img
-                        src="https://avatars.githubusercontent.com/u/194400?&s=40"
-                        alt="avatar"
-                        className="h-8 w-8 rounded-full"
-                    />
-                    {!isCollapsed && (
+                    {loading ? (
+                        <div className="h-8 w-8 rounded-full bg-slate-700 animate-pulse" />
+                    ) : (
+                        <img
+                            src={user?.profilePicture || 'https://avatars.githubusercontent.com/u/194400?&s=40'}
+                            alt="avatar"
+                            className="h-8 w-8 rounded-full"
+                        />
+                    )}
+                    {!isCollapsed && !loading && user && (
                         <div className="ml-3 text-sm">
-                            <div className="font-medium">Tom Cook</div>
-                            <div className="text-xs text-slate-400">Basic Member</div>
+                            <div className="font-medium">{user.firstName} {user.lastName}</div>
+                            <div className="text-xs text-slate-400">
+                                {user.isAdmin ? 'Admin' : 'User'}
+                            </div>
                         </div>
                     )}
                 </div>

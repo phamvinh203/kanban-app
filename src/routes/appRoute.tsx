@@ -46,7 +46,6 @@ const ProtectedLayout: React.FC = () => {
           <Route path="/subscription" element={<div>Subscription Page</div>} />
           <Route path="/settings" element={<div>Settings Page</div>} />
           <Route path="/help" element={<div>Help Page</div>} />
-          <Route path="/board/:id" element={<BoardDetailPage />} />
         </Routes>
       </main>
     </div>
@@ -81,6 +80,14 @@ const AppRoute: React.FC = () => {
           element={
             <ProtectedRoute>
               <ProtectedLayout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/board/:id"
+          element={
+            <ProtectedRoute>
+              <BoardDetailPage />
             </ProtectedRoute>
           }
         />
