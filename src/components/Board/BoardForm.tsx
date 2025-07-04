@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 
 interface BoardFormProps {
   isOpen: boolean;
@@ -28,10 +27,10 @@ const BoardForm: React.FC<BoardFormProps> = ({
   onCreate,
   loading = false,
 }) => {
-  const [boardName, setBoardName] = React.useState("");
-  const [boardDescription, setBoardDescription] = React.useState("");
-  const [visibility, setVisibility] = React.useState("workspace");
-  const [background, setBackground] = React.useState("#60A5FA");
+  const [boardName, setBoardName] = useState("");
+  const [boardDescription, setBoardDescription] = useState("");
+  const [visibility, setVisibility] = useState("workspace");
+  const [background, setBackground] = useState("#60A5FA");
 
   const handleSubmit = async () => {
     if (!boardName.trim()) return;

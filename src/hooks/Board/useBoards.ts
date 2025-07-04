@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Board } from "../../service/BoardServices/boardTypes";
-import { getBoards } from "../../service/BoardServices/boardService";
+import { getOwnedBoards } from "../../service/BoardServices/boardService";
 
 export const useBoards = () => {
   const [boards, setBoards] = useState<Board[]>([]);
@@ -11,7 +11,7 @@ export const useBoards = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getBoards();
+      const data = await getOwnedBoards();
       setBoards(data);
     } catch (err) {
       setError(
