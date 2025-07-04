@@ -1,4 +1,4 @@
-import type { ColumnContent } from "../ColumnServices/columnTypes";
+import type { Columns } from "../ColumnServices/columnTypes";
 
 export interface BoardOwner {
   id: number;
@@ -19,7 +19,7 @@ export interface Board {
   totalCards: number;
   numberOfMembers: number;
   owner: BoardOwner;
-  columns: ColumnContent[];
+  columns: Columns[];
 }
 
 export interface BoardFormInput {

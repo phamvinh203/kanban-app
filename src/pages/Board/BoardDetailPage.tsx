@@ -7,11 +7,13 @@ import CreateColumnForm from "../../components/Column/CreateColumnForm";
 import { IoMdClose } from "react-icons/io";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import type { Columns } from "../../service/ColumnServices/columnTypes";
+import BoardFormInvite from "../../components/Board/BoardFormInvite";
 
 const BoardDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { board, loading, error, refetch } = useBoardDetail(id || "");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const handleShowModal = () => {
     setShowCreateModal(true);
