@@ -9,6 +9,7 @@ export interface BoardOwner {
   role: string;
 }
 
+
 export interface Board {
   id: number;
   name: string;

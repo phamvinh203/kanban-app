@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBoards } from "../../hooks/Board/useBoards";
 import type { Board } from "../../service/BoardServices/boardTypes";
@@ -7,6 +7,10 @@ import { Loading } from "../common/Loading";
 const BoardList: React.FC = () => {
   const { boards, loading, error, refetch } = useBoards();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("Danh sách boards:", boards); 
+  }, [boards]);
 
   if (loading) {
     return <Loading />;
@@ -39,44 +43,49 @@ const BoardList: React.FC = () => {
     );
   }
 
+  // ✅ Lọc các board có id trùng nhau
+  const uniqueBoards = boards.filter(
+    (board, index, self) =>
+      index === self.findIndex((b) => b.id === board.id)
+  );
+
+  // ✅ Tạo component Card riêng
   const BoardCard: React.FC<{ board: Board }> = ({ board }) => (
-  <div
-    className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
-    onClick={() => navigate(`/board/${board.id}`)}
-  >
-    <div className="flex justify-between items-start mb-4">
-      <h3 className="text-xl font-semibold text-gray-800 truncate">
-        {board.name}
-      </h3>
-    </div>
+    <div
+      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={() => navigate(`/board/${board.id}`)}
+    >
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-xl font-semibold text-gray-800 truncate">
+          {board.name}
+        </h3>
+      </div>
 
-    {board.description && (
-      <p className="text-gray-600 mb-4 line-clamp-2">{board.description}</p>
-    )}
+      {board.description && (
+        <p className="text-gray-600 mb-4 line-clamp-2">{board.description}</p>
+      )}
 
-    {/* Gạch ngang phân cách */}
-    <div className="border-t border-gray-300 my-4" />
+      <div className="border-t border-gray-300 my-4" />
 
-    <div className="flex items-center justify-between text-sm text-gray-500">
-      <div className="">
-        <div className="font-medium">
-          Người tạo: {board.owner.firstName} {board.owner.lastName}
-        </div>
-        <div className="font-medium">
-          Thời gian tạo:{" "}
-          {new Date(board.createdAt).toLocaleDateString("vi-VN")}
+      <div className="flex items-center justify-between text-sm text-gray-500">
+        <div>
+          <div className="font-medium">
+            Người tạo: {board.owner.firstName} {board.owner.lastName}
+          </div>
+          <div className="font-medium">
+            Thời gian tạo:{" "}
+            {new Date(board.createdAt).toLocaleDateString("vi-VN")}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
-
+  );
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
-          Danh sách bảng ({boards.length})
+          Danh sách bảng ({uniqueBoards.length})
         </h2>
         <button
           onClick={refetch}
@@ -87,8 +96,8 @@ const BoardList: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {boards.map((board) => (
-          <BoardCard key={board.id} board={board} />
+        {uniqueBoards.map((board) => (
+          <BoardCard key={`board-${board.id}`} board={board} />
         ))}
       </div>
     </div>

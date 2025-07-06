@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { acceptBoardInvitation } from '../../service/BoardServices/boardService';
-import type { Board } from '../../service/BoardServices/boardTypes';
-import { Loading } from '../../components/common/Loading';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { acceptBoardInvitation } from "../../service/BoardServices/boardService";
+import type { Board } from "../../service/BoardServices/boardTypes";
+import { Loading } from "../../components/common/Loading";
 
 const AcceptInvitationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -12,9 +12,9 @@ const AcceptInvitationPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = searchParams.get('token');
+    const token = searchParams.get("token");
     if (!token) {
-      setError('Token không hợp lệ.');
+      setError("Token không hợp lệ.");
       setLoading(false);
       return;
     }
@@ -23,15 +23,21 @@ const AcceptInvitationPage: React.FC = () => {
       try {
         const board: Board = await acceptBoardInvitation(token);
         setSuccess(`Bạn đã tham gia bảng "${board.name}" thành công!`);
+
+        console.log("📋 Thông tin board nhận được:", board);
+        
         setTimeout(() => {
-          navigate(`/board/${board.id}`);
+          navigate("/dashboard?refresh=true");
         }, 2000);
       } catch (err: any) {
-        const errorMessage = err.response?.data?.message || err.message || 'Lỗi khi chấp nhận lời mời.';
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          "Lỗi khi chấp nhận lời mời.";
         if (err.response?.status === 401) {
-          setError('Bạn cần đăng nhập để chấp nhận lời mời.');
+          setError("Bạn cần đăng nhập để chấp nhận lời mời.");
         } else if (err.response?.status === 400) {
-          setError('Token không hợp lệ hoặc đã hết hạn.');
+          setError("Token không hợp lệ hoặc đã hết hạn.");
         } else {
           setError(errorMessage);
         }
@@ -54,7 +60,7 @@ const AcceptInvitationPage: React.FC = () => {
           <>
             <p className="text-red-600 mb-4">{error}</p>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Quay về trang chủ

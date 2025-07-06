@@ -11,6 +11,7 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import { TokenManager } from "../utils/tokenManager";
 import UserProfile from "../components/User/UserProfile";
 import BoardDetailPage from "../pages/Board/BoardDetailPage";
+import AcceptInvitationPage from "../pages/Board/AcceptInvitePage";
 
 // Protected wrapper component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -71,6 +72,16 @@ const AppRoute: React.FC = () => {
             <PublicRoute>
               <Register />
             </PublicRoute>
+          }
+        />
+
+        {/* Accept Invitation Route - Accessible without sidebar */}
+        <Route
+          path="/app/board/invitation/accept"
+          element={
+            <ProtectedRoute>
+              <AcceptInvitationPage />
+            </ProtectedRoute>
           }
         />
 

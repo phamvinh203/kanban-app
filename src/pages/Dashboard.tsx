@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { BsBell } from "react-icons/bs";
 import BoardForm from "../components/Board/BoardForm";
 import BoardList from "../components/Board/BoardList";
@@ -7,9 +8,21 @@ import { useBoards } from "../hooks/Board/useBoards";
 import type { BoardFormInput } from "../service/BoardServices/boardTypes";
 
 const Dashboard: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showDropdown, setShowDropdown] = useState(false);
   const { create, loading, error } = useCreateBoard();
   const { refetch } = useBoards();
+
+  // Check if we need to refresh boards after accepting invitation
+  useEffect(() => {
+    const shouldRefresh = searchParams.get("refresh");
+    if (shouldRefresh === "true") {
+      refetch();
+      // Remove the refresh parameter from URL
+      searchParams.delete("refresh");
+      setSearchParams(searchParams);
+    }
+  }, [searchParams, setSearchParams, refetch]);
 
   const handleCreateBoard = async (data: {
     name: string;
@@ -42,10 +55,8 @@ const Dashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800">Kanban Board</h1>
 
           <div className="flex items-center gap-4">
-            
             <button className="relative p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors">
               <BsBell className="w-6 h-6" />
-              
             </button>
 
             <div className="relative">

@@ -1,4 +1,3 @@
-import { Await } from "react-router-dom";
 import api from "../../config/api";
 import type { Board, BoardFormInput, InvitationRequest } from "./boardTypes";
 

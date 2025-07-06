@@ -59,6 +59,8 @@ const BoardDetailPage: React.FC = () => {
     );
   }
 
+  console.log("📋 Board data:", board);
+
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
       <div className="bg-white rounded-lg shadow-md p-6">
