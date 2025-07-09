@@ -22,7 +22,7 @@ export const useBoards = () => {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => {      
     fetchBoards();
   }, []);
 

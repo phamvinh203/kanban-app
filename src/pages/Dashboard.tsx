@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BsBell } from "react-icons/bs";
 import BoardForm from "../components/Board/BoardForm";
-import BoardList from "../components/Board/BoardList";
+import BoardList from "./Board/BoardList";
 import { useCreateBoard } from "../hooks/Board/useCreateBoard";
 import { useBoards } from "../hooks/Board/useBoards";
 import type { BoardFormInput } from "../service/BoardServices/boardTypes";

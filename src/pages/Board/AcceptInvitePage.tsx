@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { acceptBoardInvitation } from "../../service/BoardServices/boardService";
 import type { Board } from "../../service/BoardServices/boardTypes";
 import { Loading } from "../../components/common/Loading";
+import { Error } from "../../components/common/Error";
 
 const AcceptInvitationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -24,8 +25,8 @@ const AcceptInvitationPage: React.FC = () => {
         const board: Board = await acceptBoardInvitation(token);
         setSuccess(`Bạn đã tham gia bảng "${board.name}" thành công!`);
 
-        console.log("📋 Thông tin board nhận được:", board);
-        
+        // console.log("Thông tin board nhận được:", board);
+
         setTimeout(() => {
           navigate("/dashboard?refresh=true");
         }, 2000);
@@ -56,17 +57,7 @@ const AcceptInvitationPage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md text-center">
-        {error && (
-          <>
-            <p className="text-red-600 mb-4">{error}</p>
-            <button
-              onClick={() => navigate("/")}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Quay về trang chủ
-            </button>
-          </>
-        )}
+        {error && <Error message={error} onRetry={() => navigate("/")} />}
         {success && (
           <>
             <p className="text-green-600 mb-4">{success}</p>

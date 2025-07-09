@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useBoardDetail } from "../../hooks/Board/useBoardDetail";
 import { Loading } from "../../components/common/Loading";
+import { Error } from "../../components/common/Error";
 import BoardContent from "./BoardContent";
 import CreateColumnForm from "../../components/Column/CreateColumnForm";
 import { IoMdClose } from "react-icons/io";
 import { HiOutlinePlusSm } from "react-icons/hi";
-import type { Columns } from "../../service/ColumnServices/columnTypes";
 import BoardFormInvite from "../../components/Board/BoardFormInvite";
 
 const BoardDetailPage: React.FC = () => {
@@ -17,13 +17,13 @@ const BoardDetailPage: React.FC = () => {
 
   const handleShowModal = () => {
     setShowCreateModal(true);
-  }
+  };
   const handleCloseModal = () => {
     setShowCreateModal(false);
-  }
+  };
 
-  const handleCreateColumnSuccess = (newColumn: Columns) => {
-    refetch(); // Gọi lại API để lấy dữ liệu mới nhất từ server
+  const handleCreateColumnSuccess = () => {
+    refetch(); 
     setShowCreateModal(false);
   };
 
@@ -32,17 +32,7 @@ const BoardDetailPage: React.FC = () => {
   }
 
   if (error) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-red-600 mb-4">{error}</div>
-        <button
-          onClick={() => window.history.back()}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Quay lại
-        </button>
-      </div>
-    );
+    return <Error message={error} onRetry={refetch} />;
   }
 
   if (!board) {
@@ -60,6 +50,15 @@ const BoardDetailPage: React.FC = () => {
   }
 
   console.log("📋 Board data:", board);
+
+  // Tính toán totalCards từ columns
+  const totalCards =
+    board.columns?.reduce((total, column) => {
+      return total + (column.cards?.length || 0);
+    }, 0) || 0;
+
+  // Tính toán numberOfMembers từ members array
+  const numberOfMembers = board.members?.length || 0;
 
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
@@ -92,15 +91,31 @@ const BoardDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-gray-700 mb-2">📋 Tổng số thẻ</h3>
-            <p className="text-2xl font-bold text-blue-600">
-              {board.totalCards}
-            </p>
+            <p className="text-2xl font-bold text-blue-600">{totalCards}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-gray-700 mb-2">👥 Thành viên</h3>
             <p className="text-2xl font-bold text-green-600">
-              {board.numberOfMembers}
+              {numberOfMembers}
             </p>
+            {/* Hiển thị danh sách members */}
+            <div className="mt-2 flex flex-wrap gap-1">
+              {board.members?.slice(0, 3).map((member) => (
+                <div
+                  key={member.id}
+                  className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                  title={`${member.firstName} ${member.lastName} (${member.role})`}
+                >
+                  {member.firstName.charAt(0)}
+                  {member.lastName.charAt(0)}
+                </div>
+              ))}
+              {board.members && board.members.length > 3 && (
+                <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                  +{board.members.length - 3}
+                </div>
+              )}
+            </div>
           </div>
           <button
             className="bg-gray-50 p-4 rounded-lg"
@@ -124,15 +139,11 @@ const BoardDetailPage: React.FC = () => {
           <p className="text-gray-600">
             Tính năng quản lý cột và thẻ sẽ được phát triển tiếp...
           </p>
-
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 mt-6">
           <div className="flex-1">
-            <BoardContent
-              boardId={board.id}
-              columns={board.columns}
-            />
+            <BoardContent boardId={board.id} columns={board.columns} />
           </div>
           <div className="w-full md:w-1/4">
             <button
@@ -161,7 +172,6 @@ const BoardDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

@@ -21,7 +21,7 @@ const BoardFormInvite: React.FC<BoardFormInviteProps> = ({ isOpen, onClose, boar
     setSuccess(null);
 
     // Kiểm tra boardId hợp lệ
-    const boardIdNumber = parseInt(boardId, 10);
+    const boardIdNumber: number = parseInt(boardId, 10);
     if (isNaN(boardIdNumber)) {
       setError('ID bảng không hợp lệ.');
       setLoading(false);

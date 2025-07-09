@@ -39,6 +39,14 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Nếu là API delete board với verification token, không auto logout
+    if (
+      originalRequest.url?.includes("/api/board/") &&
+      originalRequest.method === "delete"
+    ) {
+      return Promise.reject(error);
+    }
+
     originalRequest._retry = true;
     const refreshToken = TokenManager.getRefreshToken();
 

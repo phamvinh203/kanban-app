@@ -1,4 +1,5 @@
 import api from "../../config/api";
+import axios from "axios";
 import type { Board, BoardFormInput, InvitationRequest } from "./boardTypes";
 
 // POST /api/board – Tạo mới board
@@ -34,14 +35,50 @@ export const updateBoard = async (
   return res.data;
 };
 
-// DELETE /api/board/{boardId} – Xoá board
-export const deleteBoard = async (boardId: number): Promise<void> => {
-  await api.delete(`/api/board/${boardId}`);
+// POST /api/board/delete/{boardId}/init – Khởi tạo thao tác xoá – Gửi email xác nhận xoá board
+export const initDeleteBoard = async (boardId: number): Promise<string> => {
+  const res = await api.post(`/api/board/delete/${boardId}/init`);
+  return res.data;
 };
 
-// POST /api/board/delete/{boardId}/init – Khởi tạo thao tác xoá
-export const initDeleteBoard = async (boardId: number): Promise<void> => {
-  await api.post(`/api/board/delete/${boardId}/init`);
+// DELETE /api/board/{boardId} – Xoá board verification token
+export const deleteBoard = async (
+  boardId: number,
+  verificationCode: string,
+  jwtToken: string
+): Promise<void> => {
+  console.log(">>> DELETE CALL:", {
+    boardId,
+    verificationCode,
+    jwtToken,
+  });
+
+  // Kiểm tra access token hiện tại
+  const currentAccessToken = localStorage.getItem("access_token");
+
+  // axios trực tiếp
+  try {
+    await axios.delete(`http://localhost:3000/api/board/${boardId}`, {
+      headers: {
+        Authorization: `Bearer ${currentAccessToken}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        token: jwtToken,
+        verificationCode: verificationCode,
+      },
+    });
+    console.log("Board deleted successfully with direct axios");
+  } catch (error) {
+    console.log("Direct axios failed, trying with api instance");
+    // Fallback với api instance
+    await api.delete(`/api/board/${boardId}`, {
+      data: {
+        verificationCode: verificationCode,
+      },
+    });
+    console.log("Board deleted successfully with api instance");
+  }
 };
 
 // Board invite
