@@ -47,38 +47,13 @@ export const deleteBoard = async (
   verificationCode: string,
   jwtToken: string
 ): Promise<void> => {
-  console.log(">>> DELETE CALL:", {
-    boardId,
-    verificationCode,
-    jwtToken,
+  await api.delete(`/api/board/${boardId}`, {
+    data: {
+      token: jwtToken,
+      verificationCode: verificationCode,
+    },
   });
-
-  // Kiểm tra access token hiện tại
-  const currentAccessToken = localStorage.getItem("access_token");
-
-  // axios trực tiếp
-  try {
-    await axios.delete(`http://localhost:3000/api/board/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${currentAccessToken}`,
-        "Content-Type": "application/json",
-      },
-      data: {
-        token: jwtToken,
-        verificationCode: verificationCode,
-      },
-    });
-    console.log("Board deleted successfully with direct axios");
-  } catch (error) {
-    console.log("Direct axios failed, trying with api instance");
-    // Fallback với api instance
-    await api.delete(`/api/board/${boardId}`, {
-      data: {
-        verificationCode: verificationCode,
-      },
-    });
-    console.log("Board deleted successfully with api instance");
-  }
+  console.log("Board deleted successfully");
 };
 
 // Board invite

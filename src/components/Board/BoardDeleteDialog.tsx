@@ -9,6 +9,7 @@ interface BoardDeleteDialogProps {
   onClose: () => void;
   onDeleted: () => void;
 }
+
 const BoardDeleteDialog: React.FC<BoardDeleteDialogProps> = ({
   boardId,
   onClose,
@@ -16,31 +17,30 @@ const BoardDeleteDialog: React.FC<BoardDeleteDialogProps> = ({
 }) => {
   const [step, setStep] = useState<"init" | "verify">("init");
   const [verificationCode, setVerificationCode] = useState("");
-  const [jwtToken, setJwtToken] = useState(""); // Lưu JWT token từ initDeleteBoard
+  const [jwtToken, setJwtToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleInitDelete = async () => {
-    try {
-      setLoading(true);
-      const token = await initDeleteBoard(boardId); // Lấy JWT token
-      setJwtToken(token); // Lưu JWT token
-      setStep("verify");
-    } catch (err: any) {
-      setError("Không thể gửi email xác nhận. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleAction = async () => {
+    setLoading(true);
+    setError("");
 
-  const handleDelete = async () => {
     try {
-      setLoading(true);
-      await deleteBoard(boardId, verificationCode, jwtToken); // Sử dụng JWT token
-      onDeleted();
-      onClose();
-    } catch (err: any) {
-      setError("Xoá bảng không thành công. Vui lòng kiểm tra lại mã xác nhận.");
+      if (step === "init") {
+        const token = await initDeleteBoard(boardId);
+        setJwtToken(token);
+        setStep("verify");
+      } else {
+        await deleteBoard(boardId, verificationCode, jwtToken);
+        onDeleted();
+        onClose();
+      }
+    } catch {
+      setError(
+        step === "init"
+          ? "Không thể gửi email xác nhận. Vui lòng thử lại."
+          : "Xoá bảng không thành công. Vui lòng kiểm tra lại mã xác nhận."
+      );
     } finally {
       setLoading(false);
     }
@@ -49,25 +49,24 @@ const BoardDeleteDialog: React.FC<BoardDeleteDialogProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
       <h2 className="text-xl font-bold mb-4">Xác nhận xoá board</h2>
+
       {error && <div className="text-red-600 mb-3">{error}</div>}
 
-      {step === "init" && (
+      {step === "init" ? (
         <>
           <p className="mb-4">
             Một email xác nhận sẽ được gửi đến tài khoản của bạn. Bạn cần nhập
             mã xác nhận để hoàn tất.
           </p>
           <button
-            onClick={handleInitDelete}
+            onClick={handleAction}
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
             disabled={loading}
           >
-            Gửi email xác nhận
+            {loading ? "Đang gửi..." : "Gửi email xác nhận"}
           </button>
         </>
-      )}
-
-      {step === "verify" && (
+      ) : (
         <>
           <input
             type="text"
@@ -77,11 +76,11 @@ const BoardDeleteDialog: React.FC<BoardDeleteDialogProps> = ({
             className="border px-3 py-2 rounded w-full mb-3"
           />
           <button
-            onClick={handleDelete}
+            onClick={handleAction}
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
             disabled={loading || !verificationCode}
           >
-            Xoá board
+            {loading ? "Đang xoá..." : "Xoá board"}
           </button>
         </>
       )}
