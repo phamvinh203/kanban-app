@@ -17,7 +17,7 @@ const BoardDeleteDialog: React.FC<BoardDeleteDialogProps> = ({
 }) => {
   const [step, setStep] = useState<"init" | "verify">("init");
   const [verificationCode, setVerificationCode] = useState("");
-  const [jwtToken, setJwtToken] = useState("");
+  const [authToken, setAuthToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,10 +28,10 @@ const BoardDeleteDialog: React.FC<BoardDeleteDialogProps> = ({
     try {
       if (step === "init") {
         const token = await initDeleteBoard(boardId);
-        setJwtToken(token);
+        setAuthToken(token);
         setStep("verify");
       } else {
-        await deleteBoard(boardId, verificationCode, jwtToken);
+        await deleteBoard(boardId, verificationCode, authToken);
         onDeleted();
         onClose();
       }

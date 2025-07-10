@@ -20,7 +20,6 @@ export interface BoardMember {
   isAdmin: boolean;
 }
 
-// Giao diện chính của một bảng công việc
 export interface Board {
   id: number;
   name: string;
@@ -39,7 +38,7 @@ export interface Board {
   numberOfMembers?: number;
 }
 
-// Giao diện dùng cho form tạo/sửa boar
+// Form tạo/sửa boar
 export interface BoardFormInput {
   name: string;
   description?: string;

@@ -48,6 +48,12 @@ const BoardCard: React.FC<BoardCardProps> = ({ board, onDeleteClick }) => {
             >
               🗑️ Xoá bảng
             </button>
+              
+            <button>
+              <span className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                📌 Ghim bảng
+              </span>
+            </button>
           </div>
         )}
       </div>

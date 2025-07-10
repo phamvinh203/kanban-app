@@ -1,6 +1,11 @@
 import api from "../../config/api";
 import axios from "axios";
-import type { Board, BoardFormInput, InvitationRequest } from "./boardTypes";
+import type {
+  Board,
+  BoardFormInput,
+  BoardMember,
+  InvitationRequest,
+} from "./boardTypes";
 
 // POST /api/board – Tạo mới board
 export const createBoard = async (data: BoardFormInput): Promise<Board> => {
@@ -26,12 +31,15 @@ export const getBoardById = async (id: number | string): Promise<Board> => {
   return res.data;
 };
 
-// PATCH /api/board/{boardId} – Cập nhật thông tin board
-export const updateBoard = async (
+// PATCH /api/board/{boardId}?memberId=...&role=...
+export const updateBoardMemberRole = async (
   boardId: number,
-  data: Partial<BoardFormInput>
-): Promise<Board> => {
-  const res = await api.patch(`/api/board/${boardId}`, data);
+  memberId: number,
+  role: string
+): Promise<BoardMember> => {
+  const res = await api.patch(
+    `/api/board/${boardId}?memberId=${memberId}&role=${role}`
+  );
   return res.data;
 };
 
@@ -45,11 +53,11 @@ export const initDeleteBoard = async (boardId: number): Promise<string> => {
 export const deleteBoard = async (
   boardId: number,
   verificationCode: string,
-  jwtToken: string
+  authToken: string
 ): Promise<void> => {
   await api.delete(`/api/board/${boardId}`, {
     data: {
-      token: jwtToken,
+      token: authToken,
       verificationCode: verificationCode,
     },
   });
