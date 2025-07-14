@@ -55,3 +55,5 @@ export interface InvitationRequest {
 export interface InvitationResponse {
   token: string;
 }
+
+
